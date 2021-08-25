@@ -7,7 +7,8 @@ addEventListener("fetch", (event) => {
   );
 });
 
-const html = `
+function getHtml(cf) {
+  return `
 <!DOCTYPE html>
 <html>
 
@@ -118,7 +119,7 @@ const html = `
         }, () => {
           // Browser supports geolocation, but user has denied permission
           handleLocationError(true, infoWindow);
-        });
+        }, { maximumAge: 300000, timeout: 5000, enableHighAccuracy: true });
       } else {
         // Browser doesn't support geolocation
         handleLocationError(false, infoWindow);
@@ -127,8 +128,7 @@ const html = `
 
     // Handle a geolocation error
     function handleLocationError(browserHasGeolocation, infoWindow) {
-      // Set default location to Sydney, Australia
-      pos = { lat: -33.856, lng: 151.215 };
+      pos = { lat: ${cf.latitude}, lng: ${cf.longitude} };
       map = new google.maps.Map(document.getElementById('map'), {
         center: pos,
         zoom: 15
@@ -270,11 +270,11 @@ const html = `
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=${GOOGLE_SECRET}&libraries=places&callback=initMap">
   </script>
 </body>
-
 </html>`
+}
 
 async function handleRequest(request) {
-  return new Response(html, {
+  return new Response(getHtml(request.cf), {
     headers: {
       'Content-Type': 'text/html'
     }
