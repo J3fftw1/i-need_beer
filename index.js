@@ -1,5 +1,4 @@
 addEventListener("fetch", (event) => {
-  console.log(GOOGLE_SECRET)
   event.respondWith(
     handleRequest(event.request).catch(
       (err) => new Response(err.stack, { status: 500 })
@@ -166,9 +165,9 @@ function getHtml(cf) {
     }
 
     // Handle the results (up to 20) of the Nearby Search
-    function nearbyCallback(results, status) {
+    function nearbyCallback(incomingResults, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
-        results.push.apply(push, results);
+        results.push.apply(results, incomingResults);
       }
     }
 
