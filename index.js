@@ -81,7 +81,7 @@ function getHtml(cf) {
   <div id="map"></div>
 
   <script>
-    const results = [];
+    const placeResults = [];
 
     let pos;
     let map;
@@ -157,17 +157,20 @@ function getHtml(cf) {
           type: [type]
         };
 
+        console.log(request);
+
         service = new google.maps.places.PlacesService(map);
         service.nearbySearch(request, nearbyCallback);
       }
 
-      createMarkers(results);
+      console.log(placeResults);
+      createMarkers(placeResults);
     }
 
     // Handle the results (up to 20) of the Nearby Search
     function nearbyCallback(incomingResults, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
-        results.push.apply(results, incomingResults);
+        placeResults.push.apply(placeResults, incomingResults);
       }
     }
 
