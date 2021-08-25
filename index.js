@@ -1,5 +1,4 @@
 addEventListener("fetch", (event) => {
-  console.log(GOOGLE_SECRET)
   event.respondWith(
     handleRequest(event.request).catch(
       (err) => new Response(err.stack, { status: 500 })
@@ -145,20 +144,26 @@ function getHtml(cf) {
 
     // Perform a Places Nearby Search Request
     function getNearbyPlaces(position) {
-      let request = {
-        location: position,
-        rankBy: google.maps.places.RankBy.DISTANCE,
-        type: ['bar', 'cafe', 'night_club']
-      };
+      // Google API is really stupid... you can only do 1 type or keyword. So... we're gonna do multiple and combine them
 
-      service = new google.maps.places.PlacesService(map);
-      service.nearbySearch(request, nearbyCallback);
+      const types = ['bar', 'cafe', 'night_club'];
+
+      for (const type of types) {
+        let request = {
+          location: position,
+          rankBy: google.maps.places.RankBy.DISTANCE,
+          type: [type]
+        };
+
+        service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, nearbyCallback);
+      }
     }
 
     // Handle the results (up to 20) of the Nearby Search
-    function nearbyCallback(results, status) {
+    function nearbyCallback(incomingResults, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
-        createMarkers(results);
+        createMarkers(incomingResults);
       }
     }
 
@@ -265,6 +270,9 @@ function getHtml(cf) {
   </script>
 
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=${GOOGLE_SECRET}&libraries=places&callback=initMap">
+  </script>
+  
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f7c4d8eb921848febbd666b3e68a38c3"}'>
   </script>
 </body>
 </html>`
