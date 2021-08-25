@@ -109,9 +109,6 @@ function getHtml(cf) {
           });
           bounds.extend(pos);
 
-          infoWindow.setPosition(pos);
-          infoWindow.setContent('Location found.');
-          infoWindow.open(map);
           map.setCenter(pos);
 
           // Call Places Nearby Search on user's location
