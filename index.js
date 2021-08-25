@@ -82,6 +82,8 @@ function getHtml(cf) {
   <div id="map"></div>
 
   <script>
+    const results = [];
+
     let pos;
     let map;
     let bounds;
@@ -145,20 +147,28 @@ function getHtml(cf) {
 
     // Perform a Places Nearby Search Request
     function getNearbyPlaces(position) {
-      let request = {
-        location: position,
-        rankBy: google.maps.places.RankBy.DISTANCE,
-        type: ['bar', 'cafe', 'night_club']
-      };
+      // Google API is really stupid... you can only do 1 type or keyword. So... we're gonna do multiple and combine them
 
-      service = new google.maps.places.PlacesService(map);
-      service.nearbySearch(request, nearbyCallback);
+      const types = ['bar', 'cafe', 'night_club'];
+
+      for (const type of types) {
+        let request = {
+          location: position,
+          rankBy: google.maps.places.RankBy.DISTANCE,
+          type: [type]
+        };
+
+        service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, nearbyCallback);
+      }
+
+      createMarkers(results);
     }
 
     // Handle the results (up to 20) of the Nearby Search
     function nearbyCallback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
-        createMarkers(results);
+        results.push.apply(push, results);
       }
     }
 
