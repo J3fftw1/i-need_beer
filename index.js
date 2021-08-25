@@ -146,7 +146,7 @@ function getHtml(cf) {
     function getNearbyPlaces(position) {
       // Google API is really stupid... you can only do 1 type or keyword. So... we're gonna do multiple and combine them
 
-      const types = ['bar', 'cafe', 'night_club'];
+      const types = ['bar', 'liquor_store', 'night_club'];
 
       for (const type of types) {
         let request = {
