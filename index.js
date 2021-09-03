@@ -6,7 +6,29 @@ addEventListener("fetch", (event) => {
   );
 });
 
-function getHtml(cf) {
+async function handleRequest(request) {
+  const url = new URL(request.url);
+
+  let lat = request.cf.latitude;
+  let lng = request.cf.longitude;
+  let custom = false;
+  for (const [key, value] of url.searchParams) {
+    if (key === 'lat') {
+      lat = value;
+      custom = true;
+    } else if (key === 'lng') {
+      lng = value;
+    }
+  }
+
+  return new Response(getHtml(lat, lng, custom), {
+    headers: {
+      'Content-Type': 'text/html'
+    }
+  });
+}
+
+function getHtml(lat, lng, custom = false) {
   return `
 <!DOCTYPE html>
 <html>
@@ -96,7 +118,7 @@ function getHtml(cf) {
       infoPane = document.getElementById('panel');
 
       // Try HTML5 geolocation
-      if (navigator.geolocation) {
+      if (${custom === true ? 'false' : 'navigator.geolocation'}) {
         navigator.geolocation.getCurrentPosition(position => {
           pos = {
             lat: position.coords.latitude,
@@ -124,19 +146,11 @@ function getHtml(cf) {
 
     // Handle a geolocation error
     function handleLocationError(browserHasGeolocation, infoWindow) {
-      pos = { lat: ${cf.latitude}, lng: ${cf.longitude} };
+      pos = { lat: ${lat}, lng: ${lng} };
       map = new google.maps.Map(document.getElementById('map'), {
         center: pos,
         zoom: 15
       });
-
-      // Display an InfoWindow at the map center
-      infoWindow.setPosition(pos);
-      infoWindow.setContent(browserHasGeolocation ?
-        'Geolocation permissions denied. Using default location.' :
-        "Error: Your browser doesn't support geolocation.");
-      infoWindow.open(map);
-      currentInfoWindow = infoWindow;
 
       // Call Places Nearby Search on the default location
       getNearbyPlaces(pos);
@@ -276,12 +290,4 @@ function getHtml(cf) {
   </script>
 </body>
 </html>`
-}
-
-async function handleRequest(request) {
-  return new Response(getHtml(request.cf), {
-    headers: {
-      'Content-Type': 'text/html'
-    }
-  });
 }
