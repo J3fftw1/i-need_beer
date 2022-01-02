@@ -70,6 +70,15 @@ function getHtml(cf) {
       text-decoration: none;
       color: cadetblue;
     }
+
+    .close-button {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+    }
+    .close-button:hover {
+      cursor: context-menu;
+    }
   </style>
 </head>
 
@@ -243,6 +252,14 @@ function getHtml(cf) {
       name.classList.add('place');
       name.textContent = placeResult.name;
       infoPane.appendChild(name);
+      const closeButton = document.createElement('p');
+      closeButton.textContent = '\u2715'
+      closeButton.addEventListener('click', function() {
+        while (infoPane.lastChild) infoPane.removeChild(infoPane.lastChild);
+        infoPane.classList.remove('open')
+      })
+      closeButton.classList.add('close-button')
+      infoPane.appendChild(closeButton);
       if (placeResult.rating) {
         let rating = document.createElement('p');
         rating.classList.add('details');
