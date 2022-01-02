@@ -301,6 +301,8 @@ function getHtml(lat, lng, custom = false) {
   </script>
 
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=${GOOGLE_SECRET}&libraries=places&callback=initMap">
+  </script>
+  
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f7c4d8eb921848febbd666b3e68a38c3"}'>
   </script>
 </body>
