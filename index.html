@@ -65,7 +65,7 @@
       position: absolute;
       top: 0px;
       right: 0px;
-      color: white;
+      /* color: red; */
       font-weight: 600;
     }
     .close-button:hover {
@@ -249,7 +249,7 @@
       infoPane.appendChild(name);
 
       const closeButton = document.createElement('p');
-      closeButton.textContent = '\u2715'
+      closeButton.textContent = '\u274C'
       closeButton.addEventListener('click', function() {
         while (infoPane.lastChild) infoPane.removeChild(infoPane.lastChild);
         infoPane.classList.remove('open')
