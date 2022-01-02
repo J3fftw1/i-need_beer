@@ -1,35 +1,3 @@
-addEventListener("fetch", (event) => {
-  event.respondWith(
-    handleRequest(event.request).catch(
-      (err) => new Response(err.stack, { status: 500 })
-    )
-  );
-});
-
-async function handleRequest(request) {
-  const url = new URL(request.url);
-
-  let lat = request.cf.latitude;
-  let lng = request.cf.longitude;
-  let custom = false;
-  for (const [key, value] of url.searchParams) {
-    if (key === 'lat') {
-      lat = value;
-      custom = true;
-    } else if (key === 'lng') {
-      lng = value;
-    }
-  }
-
-  return new Response(getHtml(lat, lng, custom), {
-    headers: {
-      'Content-Type': 'text/html'
-    }
-  });
-}
-
-function getHtml(lat, lng, custom = false) {
-  return `
 <!DOCTYPE html>
 <html>
 
@@ -127,7 +95,7 @@ function getHtml(lat, lng, custom = false) {
       infoPane = document.getElementById('panel');
 
       // Try HTML5 geolocation
-      if (${custom === true ? 'false' : 'navigator.geolocation'}) {
+      if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
           pos = {
             lat: position.coords.latitude,
@@ -155,14 +123,25 @@ function getHtml(lat, lng, custom = false) {
 
     // Handle a geolocation error
     function handleLocationError(browserHasGeolocation, infoWindow) {
-      pos = { lat: ${lat}, lng: ${lng} };
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: pos,
-        zoom: 15
-      });
+      fetch('/api/location')
+        .then(res => res.json())
+        .then(json => {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: pos,
+                zoom: 15
+            });
 
-      // Call Places Nearby Search on the default location
-      getNearbyPlaces(pos);
+            // Display an InfoWindow at the map center
+            infoWindow.setPosition(json);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Geolocation permissions denied. Using default location.' :
+                "Error: Your browser doesn't support geolocation.");
+            infoWindow.open(map);
+            currentInfoWindow = infoWindow;
+
+            // Call Places Nearby Search on the default location
+            getNearbyPlaces(json);
+        });
     }
 
     // Perform a Places Nearby Search Request
@@ -266,6 +245,7 @@ function getHtml(lat, lng, custom = false) {
       name.classList.add('place');
       name.textContent = placeResult.name;
       infoPane.appendChild(name);
+
       const closeButton = document.createElement('p');
       closeButton.textContent = '\u2715'
       closeButton.addEventListener('click', function() {
@@ -274,6 +254,7 @@ function getHtml(lat, lng, custom = false) {
       })
       closeButton.classList.add('close-button')
       infoPane.appendChild(closeButton);
+
       if (placeResult.rating) {
         let rating = document.createElement('p');
         rating.classList.add('details');
@@ -300,11 +281,8 @@ function getHtml(lat, lng, custom = false) {
     }
   </script>
 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=${GOOGLE_SECRET}&libraries=places&callback=initMap">
-  </script>
-  
-  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f7c4d8eb921848febbd666b3e68a38c3"}'>
-  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg79QlHJi3xek7FjNhXWzbQ0YAvmld6Sw&libraries=places&callback=initMap"></script>
+
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f7c4d8eb921848febbd666b3e68a38c3"}'></script>
 </body>
-</html>`
-}
+</html>
