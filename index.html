@@ -60,6 +60,16 @@
       text-decoration: none;
       color: cadetblue;
     }
+
+    .close-button {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      font-weight: 600;
+    }
+    .close-button:hover {
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -139,7 +149,7 @@
     function getNearbyPlaces(position) {
       // Google API is really stupid... you can only do 1 type or keyword. So... we're gonna do multiple and combine them
 
-      const types = ['bar', 'cafe', 'night_club'];
+      const types = ['bar', 'liquor_store', 'night_club'];
 
       for (const type of types) {
         let request = {
@@ -236,6 +246,16 @@
       name.classList.add('place');
       name.textContent = placeResult.name;
       infoPane.appendChild(name);
+
+      const closeButton = document.createElement('p');
+      closeButton.textContent = '\u274C'
+      closeButton.addEventListener('click', function() {
+        while (infoPane.lastChild) infoPane.removeChild(infoPane.lastChild);
+        infoPane.classList.remove('open')
+      })
+      closeButton.classList.add('close-button')
+      infoPane.appendChild(closeButton);
+
       if (placeResult.rating) {
         let rating = document.createElement('p');
         rating.classList.add('details');
@@ -262,7 +282,8 @@
     }
   </script>
 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg79QlHJi3xek7FjNhXWzbQ0YAvmld6Sw&libraries=places&callback=initMap">
-  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg79QlHJi3xek7FjNhXWzbQ0YAvmld6Sw&libraries=places&callback=initMap"></script>
+
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f7c4d8eb921848febbd666b3e68a38c3"}'></script>
 </body>
 </html>
