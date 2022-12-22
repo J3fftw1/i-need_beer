@@ -98,6 +98,7 @@
       // Try HTML5 geolocation
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
+          const params = new URLSearchParams(window.location.search);
           pos = {
             lat: parseInt(params.get('lat')) || position.coords.latitude,
             lng: parseInt(params.get('lng')) || position.coords.longitude
