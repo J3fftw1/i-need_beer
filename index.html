@@ -100,8 +100,8 @@
         navigator.geolocation.getCurrentPosition(position => {
           const params = new URLSearchParams(window.location.search);
           pos = {
-            lat: parseInt(params.get('lat')) || position.coords.latitude,
-            lng: parseInt(params.get('lng')) || position.coords.longitude
+            lat: parseFloat(params.get('lat')) || position.coords.latitude,
+            lng: parseFloat(params.get('lng')) || position.coords.longitude
           };
           map = new google.maps.Map(document.getElementById('map'), {
             center: pos,
