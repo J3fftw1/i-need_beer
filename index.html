@@ -99,7 +99,7 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
           pos = {
-            lat: pposition.coords.latitude,
+            lat: position.coords.latitude,
             lng: position.coords.longitude
           };
           map = new google.maps.Map(document.getElementById('map'), {
