@@ -99,8 +99,8 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
           pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lat: parseInt(params.get('lat')) || position.coords.latitude,
+            lng: parseInt(params.get('lng')) || position.coords.longitude
           };
           map = new google.maps.Map(document.getElementById('map'), {
             center: pos,
